@@ -1,0 +1,72 @@
+ '<!--------------------------HTML FORMATTING-----------------------------!>'
+#hide
+'Line break in printed PDF'
+#def break$ = '<p style="page-break-before: always;">''</p>
+#def tab$ = '&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp&nbsp'
+'Code Reference'
+#def ref$(text$) = '<span class="ref", style="color: blue; background: #EFEFFF; font-size: 12pt; font-style: italic">['text$']</span>'
+'Code Comment'
+#def cmt$(c$) = '<!'c$'!>'
+'Local Hide
+#def hide$ = '<!--'
+#def unhide$ = '--!>'
+'Note'
+#def note$(text$) = '<em>&ensp;'text$'</em>'
+#show
+#def aside$(x$; y$; lpad$; rpad$)
+	'<p style="width:lpad$; float:left">'x$'</p>
+	'<aside style="width:rpad$; padding-left:2%; border-radius:8px;margin-left:0%; float:right ;font-style:italic; background:lightblue;">
+	'<p>'y$'</p> 
+	'</aside>
+#end def
+ '<!--------------------------DESIGN FUNCTIONS-----------------------------!>'
+#hide
+hide$global_check = 1unhide$
+'Nominal Capacity; Required Capacity'
+#def check$(Rn$; Ru$)
+	#if Rn$ ≥ Ru$
+		'<p class = "ok" style="opacity: 0.7" > 'Rn$'≥'Ru$'OKAY </p> '
+		#Val
+		round(Ru$*100/Rn$)'% Capacity'
+		'<br>'
+	#else
+		#Equ
+		'<p class = "err" style="opacity: 0.7"> 'Rn$'<'Ru$'N.G</p> '
+		hide$global_check = 0unhide$
+		#Val
+		round(Ru$*100/Rn$)'% Capacity
+		'<br>'
+	#end if
+	#Equ
+#end def
+#def check_nocap$(Rn$; Ru$)
+	#if Rn$ ≥ Ru$
+		'<p class = "ok" style="opacity: 0.7" > 'Rn$'≥'Ru$'OKAY </p> '
+	#else
+		'<p class = "err" style="opacity: 0.7"> 'Rn$'<'Ru$'N.G</p> '
+	#end if
+#end def
+#def if$(cond$; true$; false$)
+	#if cond$
+		'<p class="ok" style="opacity: 0.7">'true$'</p>
+	#else
+		'<p class="err" style="opacity: 0.7">'false$'</p>
+	#end if
+#end def
+#show
+ '<!--------------------------MATHJAX FORMAT-----------------------------!>'
+#def MathJax$(eqn$)
+	#val
+	'<!--TeX-AMS_HTML for Latex format--!>'
+	'<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-AMS_HTML"></script>
+	'
+	'<script type="text/x-mathjax-config">
+	'MathJax.Hub.Config({
+	'  tex2jax: {inlineMath: [["$","$"], ["\\(","\\)"]]},
+	'  TeX: { equationNumbers: { autoNumber: "AMS" } }
+	'});
+	'</script>
+	'<style>.MathJax_Display { text-align: left !important;}</style>
+	'$$'eqn$'$$
+	#equ
+#end def

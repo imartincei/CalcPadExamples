@@ -1,0 +1,24 @@
+'<!--'jstextcounter = 1'--!>'
+#def getStringFromArray$(array$; index$; prefix$; suffix$)
+	#val
+	'<p id="customJS'jstextcounter'">
+	'<script>
+	'var arrayOfStrings = array$;
+	'customJS'jstextcounter'.innerHTML = prefix$ + arrayOfStrings['index$' - 1] + suffix$;
+	'</script>
+	'</p>
+	hide$jstextcounter = jstextcounter + 1unhide$
+	#equ
+#end def
+'
+#def getStringFromArrayBody$(array$; index$; prefix$; suffix$)
+	#val
+	'<script>
+	'var arrayOfStrings = array$;
+	'var par = document.createElement("p");
+	'par.innerHTML = prefix$ + arrayOfStrings['index$' - 1] + suffix$;
+	'document.body.appendChild(par);
+	'</script>
+	#equ
+#end def
+'
