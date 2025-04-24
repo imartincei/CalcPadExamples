@@ -1,0 +1,180 @@
+'Wall height and Youngs Modulus 
+'</div>
+h = 20000mm
+E_m = 6000N/mm^2
+'<hr />
+'Wall dimensions l_x and,l_y
+'<!--= you can add or remove walls als long as there are always equal amounts of inputs in Lx, Ly, X and Y--> 
+'<div> 
+'</div>
+l_x = [5400; 5400; 200; 200; 150]*mm
+l_y = [200; 200; 4400; 4400; 2000]*mm
+'Centre coordinates  x and y 
+'<div>
+'</div>
+x = [2700; 2700; 7800; 11000; 5000]*mm
+y = [8400; 4200; 6300; 6300; 5000]*mm
+'<hr />
+'Force in X - direction at location e<sub>fy</sub 
+'<div>
+'</div>
+p_x = 100kN','efy = 6000mm
+'Force in Y-direction at location e<sub>fx</sub>
+'<div>
+'</div>
+p_y = 0kN','efx = 0000mm
+'<hr />
+'Building edge coordinates
+'<div>
+'</div>
+x_l = [0; 12000; 12000; 0]*mm
+y_l = [0; 0; 8400; 8400]*mm
+#hide
+'<!--= scalefactor text--> 
+ss = 20
+'<!--ss= layout data--> 
+N = len(l_x)
+nnn = len(x_l)
+yymax = 1/2*l_y + y
+xxmax = 1/2*l_x + x
+widht = max(xxmax; x_l)
+height = max(yymax; y_l)
+bb = lookup_eq(y; l_y; max(y))
+cc = lookup_eq(x; l_x; max(x))
+'<!--ss= formulas--> 
+#show
+'<hr />
+'Formulas
+'<div>
+'</div>
+#noc
+k_x = l_y*E_m/((h/l_x)*(4*(h/l_x)^2 + 3))','k_y = l_x*E_m/((h/l_y)*(4*(h/l_y)^2 + 3))
+xr = (y*k_x)','Xr = sum(yr)/sum(k_y)','ex = efx - Xr','xri = x - Xr
+yr = (x*k_y)','Yr = sum(xr)/sum(k_x)','ey = efy - Yr','yri = y - Yr
+I_r = sum(k_x*yri^2 + k_y*xri^2)
+F_x = round((k_x/sum(k_x))*p_x + ((k_x*(y - Yr)/I_r)*(-p_x*ey + p_y*ex)))
+F_y = round((k_y/sum(k_y))*p_y + ((k_y*(x - Xr)/I_r)*(-p_x*ey + p_y*ex)))
+'<hr />
+#equ
+#hide
+'<!--= calculations--> 
+k_x = l_y*E_m/((h/l_x)*(4*(h/l_x)^2 + 3))
+xsum = sum(k_x)
+xr = (y*k_x)
+k_xiyi = sum(xr)
+Yr = sum(xr)/sum(k_x)
+'<hr />
+k_y = l_x*E_m/((h/l_y)*(4*(h/l_y)^2 + 3))
+ysum = sum(k_y)
+n = len(l_x)
+yr = (x*k_y)
+k_yiyi = sum(yr)
+h = fill(vector(n); h)
+nr = range(1; n; 1)
+Xr = sum(yr)/sum(k_y)
+'<hr />
+xri = x - Xr
+yri = y - Yr
+I_r = sum(k_x*yri^2 + k_y*xri^2)
+ex = efx - Xr
+ey = efy - Yr
+F_x = round((k_x/sum(k_x))*p_x + ((k_x*(y - Yr)/I_r)*(-p_x*ey + p_y*ex)))
+F_y = round((k_y/sum(k_y))*p_y + ((k_y*(x - Xr)/I_r)*(-p_x*ey + p_y*ex)))
+'<!--= table setup--> 
+table = join_cols(nr; l_x; l_y; h; k_x; k_y; x; y; xr; yr)
+table2 = join_cols(nr; x; y; yri; xri; k_x*yri^2; k_y*xri^2; F_x; F_y)
+i = n_cols(table)
+j = n_rows(table)
+ii = n_cols(table2)
+jj = n_rows(table2)
+rvtab = rsort_rows(table; 1)
+rvtab2 = rsort_rows(table2; 1)
+#post
+#val
+'Results
+'<!--= table headers--> 
+'<table class="bordered">
+'<tr><th></th><th>l<sub>x</sub></th><th>l<sub>y</sub></th><th>h</th><th>k<sub>xi</sub></th><th>k<sub>yi</sub></th><th>x<sub>i</sub></th><th>y<sub>i</sub></th><th>k<sub>xi</sub>*y<sub>i</sub></th><th>k<sub>yi</sub>*x<sub>i</sub></th></tr>
+'<!--= table data--> 
+#while j > 0
+	'<!--'I = 0'--><tr>
+	#while I < i
+		'<!--'I = I + 1'--><td>'rvtab.(j; I)'</td>
+	#loop
+	'</tr><!--'j = j - 1'-->
+#loop
+'<!--= table headers--> 
+'<td> sum </td > <td>  </td > <td>  </td > <td>  </td > <td> 'xsum'</td > <td> 'ysum' </td > <td> </td > <td>  </td > <td> 'k_xiyi' </td > <td> 'k_yiyi'</td > 
+'</table>
+'<!--= table data--> 
+'<table class="bordered">
+'<tr><th></th><th>x</th><th>y</th><th>x<sub>r</sub></th><th>y<sub>r</sub></th><th>k<sub>x</sub>*y<sub>r</sub><sup>2</sup></th><th>k<sub>y</sub>*x<sub>r</sub><sup>2</sup></th><th>Fx</th><th>Fy</th></tr>
+#while jj > 0
+	'<!--'II = 0'--><tr>
+	#while II < ii
+		'<!--'II = II + 1'--><td>'rvtab2.(jj; II)'</td>
+	#loop
+	'</tr><!--'jj = jj - 1'--> 
+#loop
+'<td> sum </td ><td></td > <td>  </td > <td> </td > <td> </td > <td> <strong>'sum(k_x*yri^2)'</strong></td ><td> <strong>'sum(k_y*xri^2)'  </strong>  </td > <td><strong>'sum(F_x)'</strong></td > <td> <strong>'sum(F_y)'</strong></td > 
+'</table>
+#val
+#hide
+#def line$(x1$; y1$; x2$; y2$; style$) = '<line x1="'x1$'" y1="'y1$'" x2="'x2$'" y2="'y2$'" style$/>
+#def rect$(x$; y$; w$; h$; style$) = '<rect x="'x$'" y="'y$'" width="'w$'" height="'h$'" style$/>
+#def texth$(x$; y$; s$) = '<text x="'x$'" y="'y$'" text-anchor="middle">s$</text>
+#def textv$(x$; y$; s$) = '<text x="'x$'" y="'y$'" text-anchor="middle" transform="rotate(-90,'x$','y$')">s$</text>
+#def text$(x$; y$; a$; s$) = '<text x="'x$'" y="'y$'" text-anchor="middle" transform="rotate(-'a$','x$','y$')">s$</text>
+#def main_style$ = style="stroke:black; stroke-width:1.5; fill:none"
+#def axis_style$ = stroke-dasharray="60,15,10,15" style="stroke:green; stroke-width:1"
+#def arrowh$(x1$; y1$; x2$; y2$; s$)
+	line$(x1$; y1$; x2$; y2$; main_style$)
+	line$(x2$; y2$; x2$ - 10; y2$ - 10; main_style$)
+	line$(x2$; y2$; x2$ - 10; y2$ + 10; main_style$)
+#end def
+#def arrowv$(x1$; y1$; x2$; y2$; s$)
+	line$(x1$; y1$; x2$; y2$; main_style$)
+	line$(x2$; y2$; x2$ - 10; y2$ - 10; main_style$)
+	line$(x2$; y2$; x2$ + 10; y2$ - 10; main_style$)
+#end def
+'<!--= drawing setup--> 
+w = widht/ss
+h = height/ss
+Xr = Xr*1000
+Yr = Yr*1000
+uuy = max(yymax)/ss
+x.(3)/ss + 1/2*l_x.(3)/ss
+l_x.(3)/ss
+uuu = (x.(4))/ss
+rrr = max(yymax)/ss - 500mm/ss
+#hide
+ttt = (efy/ss)/mm
+qqq = (efx/ss)/mm
+#show
+'<svg viewbox="'0' '0' 'w' 'h'" xmlns="http://www.w3.org/2000/svg" version="1.1" style="font-size:5pt; width:1200px; height:1200px">
+'<!--=walldrawing--> 
+#for i = 1 : N
+	    '<rect x="'(x.(i) - (1/2*l_x.(i)))/ss'" y="'(y.(i) - (1/2*l_y.(i)))/ss'" width="'l_x.(i)/ss'" height="'l_y.(i)/ss'" style="stroke:black; stroke-width:1; fill:black; fill-opacity:0.2; stroke-opacity:0.8" />'
+	texth$((25mm+(x.(i)/ss)); ((20mm+(y.(i)/ss)));Fy='(F_y.i)'kN)
+	texth$((20mm+(x.(i)/ss));(10mm+(y.(i)/ss));('(i)')Fx='(F_x.i)'kN)
+#loop
+ '<!--=centreline walls--> 
+line$((Xr)/ss; 0; (Xr)/ss; max(yymax)/ss; axis_style$)
+line$((0); (Yr/ss); (widht/ss); (Yr/ss); axis_style$)
+ '<!--=arrow forces--> 
+#if p_x > 0kN
+	arrowh$(0;ttt;30;ttt;main_style$)
+	texth$(40;ttt;'p_x')
+#end if
+#if p_y > 0kN
+	arrowv$(qqq;0;qqq;30;main_style$)
+	texth$(qqq;40;'p_y')
+#end if
+ '<!--=drawing shape--> 
+#for i1 = 1 : nnn
+	#hide
+	i2 = if(i1 ≡ nnn; 1; i1 + 1)
+	#show
+	'<line x1="'x_l.i1/ss'" Y1="'y_l.i1/ss'" x2="'x_l.i2/ss'" y2="'y_l.i2/ss'"style="stroke:black; stroke-width:1; fill:black; fill-opacity:0.9; stroke-opacity:0.9" />
+#loop
+'</svg>
