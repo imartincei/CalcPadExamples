@@ -1,0 +1,63 @@
+#local
+#include %userprofile%\cei-engineering.com\Engineering Tools - Documents\CalcPad\Modules\Helper.cpd
+#global
+#def initPlotlyGraph$(plotID$)
+	#val
+	'<script>
+	'var plotID$ = [];
+	'</script>
+#end def
+'
+#def addPlot$(plotID$; x_values$; y_values$; lineColor$; markerColor$; name$)
+	#val
+	'<script>
+	'    plotID$.push({
+	'      x: 'x_values$',
+	'      y: 'y_values$',
+	'      mode: "lines + markers",
+	'      type: "scatter",
+	'      line: { color: "lineColor$", width: 2 },
+	'      marker: { size: 5, color: "markerColor$" },
+	'      name: "name$",
+	'    });
+	'</script>
+#end def
+'
+#def plotGraph$(plotID$; title$; x_axis_label$; y_axis_label$)
+	#val
+	'<script src = "https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.17/d3.min.js" ></script> 
+	'<script src = "https://cdn.plot.ly/plotly-2.26.0.min.js"charset = "utf-8" ></script > 
+	'<div id="plot" style="width:600px;height:400px;"></div>
+	'  <script>
+	'
+	'    var layout = {
+	'      title: "title$",
+	'      xaxis: { title: "x_axis_label$" },
+	'      yaxis: { title: "y_axis_label$" }
+	'    };
+	'    Plotly.newPlot("plot", plotID$, layout);
+	'  </script>
+#end def
+'
+#def getPlotPoints$(x_vals$; y_vals$; function$; x_start$; x_end$; step$)
+	hide$
+	ζx_vals = vector(step$)
+	ζy_vals = vector(step$)
+	#for ζi = 1 : step$
+		ζx_vals.ζi = ζi*(x_end$ - x_start$)/step$
+		ζy_vals.ζi = function$(ζi*(x_end$ - x_start$)/step$)
+	#loop
+	x_vals$ = ζx_vals
+	y_vals$ = ζy_vals
+	unhide$
+#end def
+'
+#local
+f(x) = 1/x
+g(x) = x
+initPlotlyGraph$(myPlot1)
+getPlotPoints$(x_values1; y_values1; f; 0; 10; 100)
+getPlotPoints$(x_values2; y_values2; g; 0; 10; 100)
+addPlot$(myPlot1; x_values1; y_values1; red; black; f(x))
+addPlot$(myPlot1; x_values2; y_values2; blue; black; g(x))
+plotGraph$(myPlot1; My Plot; X-Axis; Y-Axis)
